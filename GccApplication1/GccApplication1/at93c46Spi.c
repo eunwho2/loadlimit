@@ -65,6 +65,19 @@ int16_t saveCode(int codeNo,int16_t codeData)
 	uint8_t tmpSPI1,tmpSPI2;
 	uint8_t tmpData1,tmpData2;
 
+	switch(codeNo){
+		case 0: codePoint		= codeData; break;
+		case 1: codeFilt		= codeData; break;
+		case 2: codeDivision	= codeData; break;
+		case 3: codeAutoZero	= codeData; break;
+		case 4: codeAlarm		= codeData; break;
+		case 5: codeOver		= codeData; break;
+		case 6: codeWeight		= codeData; break;
+		case 8: codeAdcSpan		= codeData; break;
+		case 9: codeAdcZero		= codeData; break;
+	}
+	
+//	initCodeData();
 	tmpData1 = (uint8_t)(codeData >> 8 );
 	tmpData2 = (uint8_t)(codeData % 256);
 	
@@ -134,19 +147,19 @@ int initRomData(void)
 	codeAutoZero	= saveCode(3,0);
 	if( (codeAutoZero < 0 ) || (codeAutoZero > 1)) return ERR_CODE_3;
 
-	codeAlarm		= saveCode(4,5000);
+	codeAlarm		= saveCode(4,1000);
 	if( (codeAlarm < 0 ) || (codeAlarm > 9999 )) return ERR_CODE_4;
 
-	codeOver		= saveCode(5,5500);
+	codeOver		= saveCode(5,1200);
 	if( (codeOver < 0 ) || (codeOver > 9999)) return ERR_CODE_5;
 
-	codeWeight		= saveCode(6,5000);
+	codeWeight		= saveCode(6,2000);
 	if( (codeWeight < 0 ) || (codeWeight > 9999)) return ERR_CODE_6;
 
-	codeAdcSpan	= saveCode(8,900);
+	codeAdcSpan	= saveCode(8,750);
 	if( (codeAdcSpan < 200 ) || (codeAdcSpan > 1020)) return ERR_CODE_8;
 
-	codeAdcZero	= saveCode(9,100);
+	codeAdcZero	= saveCode(9,10);
 	if( (codeAdcZero < 0 ) || (codeAdcZero > 200)) return ERR_CODE_9;
 	
 	return -1;

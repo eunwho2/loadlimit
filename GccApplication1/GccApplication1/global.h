@@ -24,6 +24,8 @@ int16_t codeWeight;
 int16_t codeAdcSpan;
 int16_t codeAdcZero;
 
+int tripNumber;
+
 volatile int x;
 
 volatile uint32_t timerCounter2 = 0;
@@ -51,5 +53,9 @@ int32_t calcFactor;
 int32_t calcOffset;
 
 volatile int16_t  adcWeightIn;
+
+int gflagConnect;
+uint8_t gUartTxBuffer[10]={0};
+uint8_t gUartRxBuffer[10]={0};
 
 #endif /* GLOBAL_H_ */

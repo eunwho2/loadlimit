@@ -23,6 +23,8 @@ extern int16_t codeWeight;
 extern int16_t codeAdcSpan;
 extern int16_t codeAdcZero;
 
+extern int tripNumber;
+
 extern volatile int x;
 
 extern volatile uint32_t timerCounter2;
@@ -49,5 +51,9 @@ extern int32_t calcFactor;
 extern int32_t calcOffset;
 
 extern volatile int16_t  adcWeightIn;
+
+extern int gflagConnect;
+extern uint8_t gUartTxBuffer[10];
+extern uint8_t gUartRxBuffer[10];
 
 #endif /* EXTERN_H_ */

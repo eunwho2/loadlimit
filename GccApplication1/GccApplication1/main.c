@@ -55,25 +55,36 @@ ISR(TIMER2_OVF_vect)
 
 void initADC()
 {
-	//ADMUX = (0x01 << REFS0) ; // channel 0 
+	ADMUX = (0x01 << REFS0) ; // channel 0 
 	// ADCSRA = (0x01 << ADEN ) |(0x01 << ADSC ) |(0x01<<ADFR)|( 0x01 << ADPS2 )|( 0x01 << ADPS1 )|( 0x01 << ADPS0 );
 //	ADCSRA = 0xff;
-	ADMUX = 0b01011110;		// 1.22V 
+	//ADMUX = 0b01011110;		// 1.22V 
 	ADCSRA = 0b11111111;
 	
 }
+uint16_t testjk;
 
 ISR(ADC_vect)
 {
 	static int adcRingCount = 0;
 	static int16_t adcRingBuf[16]={0};
+	int16_t tmpAdc;
+	uint8_t tmp;	
 	
-	adcWeightIn = ( ADCH & 0x03 ) * 256 + (ADCL);
+	tmp = ADCL;
+	
+	tmpAdc = ( ADCH & 0x03 ) * 256 + tmp;
+	testjk = tmpAdc;
+
 	adcWeight -= adcRingBuf[adcRingCount];
 	adcRingBuf[adcRingCount] = adcWeightIn;	
-	adcWeight += adcWeightIn;
-	
+
+	adcWeight += tmpAdc;
 	adcRingCount = ( adcRingCount > 14 ) ? 0 : adcRingCount +1 ; 
+
+	adcWeightIn = adcWeight / 16;
+	
+	ADCSRA |= 0x40;		// start conversion
 }
 
 uint8_t getButton(void){
@@ -99,17 +110,43 @@ uint8_t tmpDigit[4];
 void displayWeight(int16_t weightIn)
 {
 	int i;
+	int16_t tmpWeight;
+	
 	// display loadWeight
-	tmpDigit[3] = weightIn/1000;
-	tmpDigit[2] = (weightIn%1000)/100;
-	tmpDigit[1] = (weightIn%100)/10;
-	tmpDigit[0] = weightIn%10;
-	
-	//--- 0000. ---> ___0.
+	if(weightIn < 0 ){
+		tmpWeight = -weightIn;
+		if(tmpWeight > 998 ){ 
+			tmpDigit[3] = 0x40;
+			tmpDigit[2] = fndTableNum[9];
+			tmpDigit[1] = fndTableNum[9];
+			tmpDigit[0] = fndTableNum[9];
+		
+		} else {
+			tmpDigit[3] = 0x40;
+			tmpDigit[2] = tmpWeight/100;
+			tmpDigit[1] = (tmpWeight%100)/10;
+			tmpDigit[0] = tmpWeight%10;
+			for(i = 0 ; i < 3 ; i++ ) fndData[i] = fndTableNum[tmpDigit[i]];
+		}
+		if( codePoint != 0 ) fndData[codePoint] |= 0x80;
+		return;
+	}
 
-	for(i=0;i < 4 ; i++ ) tmpDigit[i] = fndTableNum[tmpDigit[i]];
+	if(weightIn > 9999 ){
+		tmpDigit[3] = 9;
+		tmpDigit[2] = 9;
+		tmpDigit[1] = 9;
+		tmpDigit[0] = 9;		
+	} else {
+		tmpDigit[3] = weightIn/ 1000;
+		tmpDigit[2] = (weightIn%1000)/100;
+		tmpDigit[1] = (weightIn%100)/10;
+		tmpDigit[0] = weightIn%10;
+	}
 	
-	if(codePoint < 0 ){
+	for(i = 0 ; i < 4 ; i++ ) tmpDigit[i] = fndTableNum[tmpDigit[i]];
+	
+	if(codePoint <= 0 ){
 		if(tmpDigit[3] == fndTableNum[0] ) {
 			tmpDigit[3] = 0x00;
 			if(tmpDigit[2] == fndTableNum[0] ) {
@@ -120,30 +157,14 @@ void displayWeight(int16_t weightIn)
 			}
 		}
 	}
-	else if(codePoint == 0 ){
-		//tmpDigit[0] |= 0x80;
-		if(tmpDigit[3] == fndTableNum[0] ) {
-			tmpDigit[3] = 0x00;
-			if(tmpDigit[2] == fndTableNum[0] ) {
-				tmpDigit[2] = 0x00;
-				if(tmpDigit[1] == fndTableNum[0] ) {
-					tmpDigit[1] = 0x00;
-				}
-			}
-		}
-	}
-	//--- 000.0  --> __0.0
 	else if(codePoint == 1 ){
 		tmpDigit[1] |= 0x80;
 		if(tmpDigit[3] == fndTableNum[0] ) {
 			tmpDigit[3] = 0x00;
-			if(tmpDigit[2] == fndTableNum[0] ) {
+			if(tmpDigit[2] == fndTableNum[0] )
 				tmpDigit[2] = 0x00;
-			}
 		}
 	}
-
-	//--- 00.00  --> _0.00
 	else if(codePoint == 2 ){
 		tmpDigit[2] |= 0x80;
 		if(tmpDigit[3] == fndTableNum[0] ) {
@@ -157,6 +178,9 @@ void displayWeight(int16_t weightIn)
 void displayNumber(int16_t weightIn)
 {
 	int i;
+	static uint32_t startmsecCount;
+	if( elaspMsecTime(startmsecCount) < 300 ) return;
+	startmsecCount = timerCounter2;
 
 	tmpDigit[3] = weightIn/1000;
 	tmpDigit[2] = (weightIn%1000)/100;
@@ -190,10 +214,19 @@ void initGpio()
 }
 
 void initCodeData(){
-	calcFactor = codeWeight * 1024 / ( codeAdcSpan - codeAdcZero );
-	calcOffset = - codeWeight * codeAdcZero * 1024 / ( codeAdcSpan - codeAdcZero);
+	calcFactor = (int32_t ) codeWeight * 1024;
+	calcFactor = calcFactor / ( codeAdcSpan - codeAdcZero );
+	
+	calcOffset = (int32_t ) codeWeight * 1024;
+	calcOffset = - calcOffset * codeAdcZero / ( codeAdcSpan - codeAdcZero);
+	// calcOffset = - codeWeight * codeAdcZero * 1024 / ( codeAdcSpan - codeAdcZero);
+
 	alarmOn = 0;
 	overOn	= 0;
+	gflagConnect = 0;
+	tripNumber = 0;
+	codeNumber = 0;
+	blinkCmdFlag = 0x00;
 }
 
 int returnVal;
@@ -204,16 +237,21 @@ int main(void)
 	initGpio();
 	
 	initADC();	
+	
+	initUart();
+	
 	sei();	
 
-//	initRomData();	
+    initUart();
+
 	readRomData();
 	initCodeData();		
 	loadWeight = readLoad();
 	enterModeRun();
     while (1) 
     {	
-		procRelayOut( );	
+		procRelayOut( );
+		sciCommandProc( );	
 		command = getCommand();
 		loadWeight = readLoad();
 		switch( machineState ){
@@ -221,6 +259,7 @@ int main(void)
 			case MODE_PASSWD		: modePassWord(command)		; break;
 			case MODE_SELECT_CODE	: modeSelectCode(command)	; break;
 			case MODE_CHANGE_CODE	: modeChangeCode(command)	; break;
+			case MODE_ERROR			: modeError(command)		; break;			
 			default					: enterModeRun( )	; break;
 		}		
     }
@@ -229,6 +268,10 @@ int main(void)
 
 void procRelayOut(void)
 {
+	uint8_t tmp;
+	overOn  = ( loadWeight > codeOver  ) ? 1 : 0;
+	alarmOn = ( loadWeight > codeAlarm ) ? 1 : 0;
+	
 //--- alarm 
 	if( alarmOn){
 		sbi(PORTA,RELAY_ALARM);
@@ -246,6 +289,10 @@ void procRelayOut(void)
 		cbi(PORTA,RELAY_OVER);
 		sbi(PORTB,LED_OVER);
 	}
+
+	tmp = PIND & 0x01;
+	if(tmp)	sbi(PORTA,RELAY_OVER);
+	
 }
 
 void systemErrProc( uint8_t err_no)
@@ -256,15 +303,28 @@ void systemErrProc( uint8_t err_no)
 int16_t readLoad(void)
 {
 	int i,j;
-	int32_t tmp;
 	static int16_t weightBuf[10] ={0};
 	static int ringCountFilt = 0;
 	int16_t weight1;
 	int32_t weightSum;
+	static uint32_t startmsecCount=0;
+	
+	if( elaspMsecTime(startmsecCount) < 100 ) return loadWeight ;
+	startmsecCount = timerCounter2;
 
-	tmp = calcFactor * adcWeight * 1024 /16  + calcOffset;
+	if(adcWeightIn > 1020 ){
+		tripNumber = 3;
+		enterModeError();
+		return 0;
+	} else if ( adcWeightIn < 0 ){
+		tripNumber = 4;
+		enterModeError();
+		return 0;		
+	}
 
-	weight1 = (int16_t)( tmp >> 10 );
+	weight1 = (int16_t)(( calcFactor * adcWeightIn  + calcOffset ) / 1024) ;
+
+	// weight1 = (int16_t)( tmp >> 10 );
 	
 	weightBuf[ringCountFilt] = weight1;
 	ringCountFilt = (ringCountFilt > 8 ) ? 0 : ringCountFilt +1;
@@ -279,8 +339,8 @@ int16_t readLoad(void)
 	weight1 = weightSum / ( codeFilt + 1);	 
 
 //-- divison proc
-	if( codeDivision == 0 ) weight1 = ( weight1 / 10 ) * 10;
-	else weight1 = ( weight1 / codeDivision ) * codeDivision;
+	if( codeDivision == 0 ) weight1 = ( ( weight1 +5)  / 10 ) * 10;
+	else weight1 = ( ( weight1 + codeDivision ) / codeDivision ) * codeDivision;
 
 	return weight1;	
 }

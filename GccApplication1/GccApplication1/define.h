@@ -12,8 +12,11 @@
 #define LED_ALARM	6
 #define LED_OVER	7
 
-#define RELAY_ALARM	5
-#define RELAY_OVER	6
+// pcb name error 2020-0702
+//#define RELAY_ALARM	5
+// #define RELAY_OVER	6
+#define RELAY_ALARM	6
+#define RELAY_OVER	5
 
 #define BTN_NULL	0xff
 #define BTN_UP		0xef
@@ -26,6 +29,7 @@
 #define MODE_PASSWD			1
 #define MODE_SELECT_CODE	2
 #define MODE_CHANGE_CODE	3
+#define MODE_ERROR			4
 
 #define FND_DATA_DDR		DDRC   // FND Data Port
 #define FND_CONTROL_DDR		DDRA   // FND Control Port

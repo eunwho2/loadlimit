@@ -17,10 +17,13 @@ void enterModeRun(void);
 void enterModePassWord(void);
 void enterModeSelectCode(void);
 void enterModeChangeCode(void);
+void enterModeError(void);
+
 int modeRun(uint8_t cmd);
 int modePassWord(uint8_t cmd );
 int modeSelectCode(uint8_t cmd);
 int modeChangeCode(uint8_t cmd);
+int modeError(uint8_t cmd);
 
 void TimerInterruptInit(void);
 uint32_t elaspMsecTime(uint32_t startTimerCount);
@@ -30,7 +33,6 @@ int16_t readLoad(void);
 void displayWeight(int16_t weightIn);
 
 void systemErrProc( uint8_t err_no);
-int16_t readLoad(void);
 void procRelayOut(void );
 void initCodeData();
 void displayNumber(int16_t weightIn);
@@ -45,5 +47,12 @@ int16_t readCode(int codeNo);
 int readRomData(void);
 int initRomData(void);
 
+void initUart();
+void transmitByte(uint8_t data);
+uint8_t receiveByte(void);
+void readString(char str[], uint8_t maxLength);
+void sciCommandProc();
+void toAscii(int16_t indata,uint8_t point, char * returnVal);
+void sendToLargeFnd( );
 
 #endif /* MODULE_H_ */
