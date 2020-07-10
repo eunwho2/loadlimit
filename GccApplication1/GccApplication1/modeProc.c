@@ -45,24 +45,24 @@ void enterModeChangeCode(void)
 	switch(codeNumber){	
 	case 0:
 		tmpCodeData = codePoint;
-		blinkCmdFlag = 0x00;	// no blink	
-		displayWeight(loadWeight);
+		if(tmpCodeData == 0) blinkCmdFlag = 1;
+		else if(tmpCodeData == 1) blinkCmdFlag = 2;
+		else if(tmpCodeData == 2) blinkCmdFlag = 4;
+		else {
+			tmpCodeData = 0;
+			blinkCmdFlag = 1; 
+		}		
+		displayWeight1(loadWeight);
 		break;
 	case 1:
 		tmpCodeData = codeFilt;	//
-		blinkCmdFlag = 0x00;
-		fndData[3] = 0x00;
-		fndData[2] = 0x00;
-		fndData[1] = 0x00;
-		fndData[0] = fndTableNum[tmpCodeData];
+		blinkCmdFlag = 1;
+		displayNumber1(tmpCodeData);		// no point add space 
 		break;
 	case 2:
 		tmpCodeData = codeDivision;	//
-		blinkCmdFlag = 0x00;
-		fndData[3] = 0x00;
-		fndData[2] = 0x00;
-		fndData[1] = 0x00;
-		fndData[0] = fndTableNum[tmpCodeData];
+		blinkCmdFlag = 1;
+		displayNumber1(tmpCodeData);		// no point add space
 		break;
 	case 3:
 		tmpCodeData = codeAutoZero;
@@ -83,19 +83,19 @@ void enterModeChangeCode(void)
 		tmpCodeData = codeAlarm;
 		editDigitPoint = 0;		// 1000
 		blinkCmdFlag = 0x01;
-		displayWeight(tmpCodeData);
+		displayWeight1(tmpCodeData);
 		break;
 	case 5:
 		tmpCodeData = codeOver;
 		editDigitPoint = 0;		// 1000
 		blinkCmdFlag = 0x01;
-		displayWeight(tmpCodeData);
+		displayWeight1(tmpCodeData);
 		break;
 	case 6:
 		tmpCodeData = codeWeight;
 		editDigitPoint = 0;		// 1000
 		blinkCmdFlag = 0x01;
-		displayWeight(tmpCodeData);
+		displayWeight1(tmpCodeData);
 		break;
 	case 7:
 		editDigitPoint = 0;		// 1000
@@ -112,7 +112,7 @@ int modeRun(uint8_t cmd)
 {
 	if( cmd  == BTN_ENTER ){ 
 		enterModePassWord();
-		//enterModeSelectCode();
+		// enterModeSelectCode();
 		return 0;
 	}
 	displayWeight(loadWeight);
@@ -127,7 +127,7 @@ int modePassWord(uint8_t cmd )
 	
 	if( cmd == BTN_ENTER ){
 		passwd = passWord[3] * 1000 +passWord[2] * 100 + passWord[1] * 10 + passWord[0]; 	
-		if( passwd == 3262 ){
+		if( passwd == 5737 ){
 			if(codeNumber == 6 ){
 				saveCode(6,tmpCodeData);
 				saveCode(8,adcWeight / 16);
@@ -287,14 +287,21 @@ int modeChangeCode(uint8_t cmd)
 		switch(codeNumber){
 		case 0:
 			tmpCodeData = ( tmpCodeData > 1 ) ? 0 : tmpCodeData + 1;
+			if(tmpCodeData == 0) blinkCmdFlag = 1;
+			else if(tmpCodeData == 1) blinkCmdFlag = 2;
+			else if(tmpCodeData == 2) blinkCmdFlag = 4;
+			else {
+				tmpCodeData = 0;
+				blinkCmdFlag = 1;
+			}
 			codePoint = tmpCodeData;
-			displayWeight(loadWeight);
+			displayWeight1(loadWeight);
 			//displayNumber(loadWeight);
 			break;
 		case 1:
 			tmpCodeData = ( tmpCodeData > 8 ) ? 0 : tmpCodeData + 1;
 			//displayWeight(tmpCodeData);
-			displayNumber(loadWeight);
+			displayNumber1(tmpCodeData);
 			break;
 		case 2:
 			switch(tmpCodeData){
@@ -304,7 +311,7 @@ int modeChangeCode(uint8_t cmd)
 				case 5: tmpCodeData = 0; break;
 				default: tmpCodeData = 1; break;
 			}
-			displayNumber(tmpCodeData);
+			displayNumber1(tmpCodeData);
 			break;
 		case 3:
 			if(tmpCodeData){
@@ -326,8 +333,8 @@ int modeChangeCode(uint8_t cmd)
 		case 6:
 			tmpFndData[editDigitPoint] = ( tmpFndData[editDigitPoint] > 8 ) ? 0 : tmpFndData[editDigitPoint] +1;
 			tmpCodeData = tmpFndData[3] * 1000 +tmpFndData[2]*100 + tmpFndData[1] * 10 + tmpFndData[0];
-			//displayWeight(tmpCodeData);
-			displayNumber(loadWeight);
+			displayWeight1(tmpCodeData);
+			//displayNumber(tmpCodeData);
 			break;
 		}
 	}
@@ -335,9 +342,17 @@ int modeChangeCode(uint8_t cmd)
 	if(cmd == BTN_LEFT){
 		switch(codeNumber){
 		case 0:
-			tmpCodeData = ( tmpCodeData <= 0 ) ? 2 : tmpCodeData - 1;
+			tmpCodeData = ( tmpCodeData < 1 ) ? 2 : tmpCodeData - 1;
+			if(tmpCodeData == 0) blinkCmdFlag = 1;
+			else if(tmpCodeData == 1) blinkCmdFlag = 2;
+			else if(tmpCodeData == 2) blinkCmdFlag = 4;
+			else {
+				tmpCodeData = 0;
+				blinkCmdFlag = 1;
+			}
 			codePoint = tmpCodeData;
-			displayWeight(loadWeight);
+			displayWeight1(loadWeight);
+			//displayNumber(loadWeight);
 			break;
 		case 4:
 		case 5:
@@ -349,8 +364,8 @@ int modeChangeCode(uint8_t cmd)
 				case 2 : blinkCmdFlag = 0x04; break;
 				case 3 : blinkCmdFlag = 0x08; break;
 			}	
-			//displayWeight(tmpCodeData);
-			displayNumber(loadWeight);
+			displayWeight1(tmpCodeData);
+			// displayNumber(tmpCodeData);
 			break;
 		}
 	}

@@ -397,7 +397,7 @@ END GROUP
 .rela.plt
  *(.rela.plt)
 
-.text           0x00000000     0x17b4
+.text           0x00000000     0x1b30
  *(.vectors)
  .vectors       0x00000000       0x8c L:/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128a/avr51/crtatmega128a.o
                 0x00000000                __vector_default
@@ -532,105 +532,111 @@ END GROUP
                 0x00000622       0x3a main.o
                 0x00000622                getButton
  .text.displayWeight
-                0x0000065c      0x1a4 main.o
+                0x0000065c      0x1b4 main.o
                 0x0000065c                displayWeight
+ .text.displayWeight1
+                0x00000810      0x170 main.o
+                0x00000810                displayWeight1
+ .text.displayNumber1
+                0x00000980      0x15e main.o
+                0x00000980                displayNumber1
  .text.displayNumber
-                0x00000800       0x94 main.o
-                0x00000800                displayNumber
+                0x00000ade       0x94 main.o
+                0x00000ade                displayNumber
  .text.initGpio
-                0x00000894       0x30 main.o
-                0x00000894                initGpio
+                0x00000b72       0x30 main.o
+                0x00000b72                initGpio
  .text.initCodeData
-                0x000008c4       0xd6 main.o
-                0x000008c4                initCodeData
+                0x00000ba2       0xd6 main.o
+                0x00000ba2                initCodeData
  .text.procRelayOut
-                0x0000099a       0x70 main.o
-                0x0000099a                procRelayOut
+                0x00000c78       0x70 main.o
+                0x00000c78                procRelayOut
  .text.systemErrProc
-                0x00000a0a        0x2 main.o
-                0x00000a0a                systemErrProc
+                0x00000ce8        0x2 main.o
+                0x00000ce8                systemErrProc
  .text.readLoad
-                0x00000a0c      0x1d6 main.o
-                0x00000a0c                readLoad
- .text.main     0x00000be2       0x78 main.o
-                0x00000be2                main
+                0x00000cea      0x1d6 main.o
+                0x00000cea                readLoad
+ .text.main     0x00000ec0       0x8e main.o
+                0x00000ec0                main
  .text.enterModeRun
-                0x00000c5a       0x14 modeProc.o
-                0x00000c5a                enterModeRun
+                0x00000f4e       0x14 modeProc.o
+                0x00000f4e                enterModeRun
  .text.enterModePassWord
-                0x00000c6e       0x3a modeProc.o
-                0x00000c6e                enterModePassWord
+                0x00000f62       0x3a modeProc.o
+                0x00000f62                enterModePassWord
  .text.enterModeSelectCode
-                0x00000ca8       0x3c modeProc.o
-                0x00000ca8                enterModeSelectCode
+                0x00000f9c       0x3c modeProc.o
+                0x00000f9c                enterModeSelectCode
  .text.enterModeChangeCode
-                0x00000ce4      0x15c modeProc.o
-                0x00000ce4                enterModeChangeCode
- .text.modeRun  0x00000e40       0x18 modeProc.o
-                0x00000e40                modeRun
+                0x00000fd8      0x16c modeProc.o
+                0x00000fd8                enterModeChangeCode
+ .text.modeRun  0x00001144       0x18 modeProc.o
+                0x00001144                modeRun
  .text.modePassWord
-                0x00000e58      0x17c modeProc.o
-                0x00000e58                modePassWord
+                0x0000115c      0x17e modeProc.o
+                0x0000115c                modePassWord
  .text.modeSelectCode
-                0x00000fd4      0x16a modeProc.o
-                0x00000fd4                modeSelectCode
+                0x000012da      0x16a modeProc.o
+                0x000012da                modeSelectCode
  .text.enterModeError
-                0x0000113e       0x32 modeProc.o
-                0x0000113e                enterModeError
+                0x00001444       0x32 modeProc.o
+                0x00001444                enterModeError
  .text.modeChangeCode
-                0x00001170      0x35a modeProc.o
-                0x00001170                modeChangeCode
+                0x00001476      0x3d0 modeProc.o
+                0x00001476                modeChangeCode
  .text.modeError
-                0x000014ca        0xc modeProc.o
-                0x000014ca                modeError
+                0x00001846        0xc modeProc.o
+                0x00001846                modeError
  .text.initUart
-                0x000014d6       0x28 uart.o
-                0x000014d6                initUart
+                0x00001852       0x28 uart.o
+                0x00001852                initUart
  .text.transmitByte
-                0x000014fe       0x10 uart.o
-                0x000014fe                transmitByte
+                0x0000187a       0x10 uart.o
+                0x0000187a                transmitByte
  .text.__vector_30
-                0x0000150e       0xac uart.o
-                0x0000150e                __vector_30
+                0x0000188a       0xac uart.o
+                0x0000188a                __vector_30
  .text.sendToLargeFnd
-                0x000015ba       0x9a uart.o
-                0x000015ba                sendToLargeFnd
+                0x00001936       0x9a uart.o
+                0x00001936                sendToLargeFnd
  .text.sciCommandProc
-                0x00001654       0x42 uart.o
-                0x00001654                sciCommandProc
+                0x000019d0       0x42 uart.o
+                0x000019d0                sciCommandProc
  .text.libgcc.div
-                0x00001696       0x26 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_divmodhi4.o)
-                0x00001696                _div
-                0x00001696                __divmodhi4
+                0x00001a12       0x26 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_divmodhi4.o)
+                0x00001a12                _div
+                0x00001a12                __divmodhi4
  .text.libgcc.div
-                0x000016bc       0x28 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_divmodsi4.o)
-                0x000016bc                __divmodsi4
+                0x00001a38       0x28 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_divmodsi4.o)
+                0x00001a38                __divmodsi4
  .text.libgcc.div
-                0x000016e4       0x10 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_negsi2.o)
-                0x000016e4                __negsi2
- .text.libgcc   0x000016f4       0x12 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_tablejump2.o)
-                0x000016f4                __tablejump2__
+                0x00001a60       0x10 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_negsi2.o)
+                0x00001a60                __negsi2
+ .text.libgcc   0x00001a70       0x12 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_tablejump2.o)
+                0x00001a70                __tablejump2__
  .text.libgcc.mul
-                0x00001706        0xc l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_mulshisi3.o)
-                0x00001706                __mulshisi3
-                0x0000170a                __mulohisi3
+                0x00001a82        0xc l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_mulshisi3.o)
+                0x00001a82                __mulshisi3
+                0x00001a86                __mulohisi3
  .text.libgcc.div
-                0x00001712       0x28 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodhi4.o)
-                0x00001712                __udivmodhi4
+                0x00001a8e       0x28 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodhi4.o)
+                0x00001a8e                __udivmodhi4
  .text.libgcc.div
-                0x0000173a       0x44 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodsi4.o)
-                0x0000173a                __udivmodsi4
+                0x00001ab6       0x44 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_udivmodsi4.o)
+                0x00001ab6                __udivmodsi4
  .text.libgcc.mul
-                0x0000177e       0x14 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_muluhisi3.o)
-                0x0000177e                __muluhisi3
+                0x00001afa       0x14 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_muluhisi3.o)
+                0x00001afa                __muluhisi3
  .text.libgcc.mul
-                0x00001792       0x1e l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_umulhisi3.o)
-                0x00001792                __umulhisi3
-                0x000017b0                . = ALIGN (0x2)
+                0x00001b0e       0x1e l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_umulhisi3.o)
+                0x00001b0e                __umulhisi3
+                0x00001b2c                . = ALIGN (0x2)
  *(.fini9)
- .fini9         0x000017b0        0x0 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
-                0x000017b0                _exit
-                0x000017b0                exit
+ .fini9         0x00001b2c        0x0 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+                0x00001b2c                _exit
+                0x00001b2c                exit
  *(.fini9)
  *(.fini8)
  *(.fini8)
@@ -649,11 +655,11 @@ END GROUP
  *(.fini1)
  *(.fini1)
  *(.fini0)
- .fini0         0x000017b0        0x4 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
+ .fini0         0x00001b2c        0x4 l:/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/../lib/gcc/avr/5.4.0/avr51\libgcc.a(_exit.o)
  *(.fini0)
-                0x000017b4                _etext = .
+                0x00001b30                _etext = .
 
-.data           0x00800100       0x28 load address 0x000017b4
+.data           0x00800100       0x28 load address 0x00001b30
                 0x00800100                PROVIDE (__data_start, .)
  *(.data)
  *(.data*)
@@ -678,23 +684,23 @@ END GROUP
                 0x00800128                PROVIDE (__bss_start, .)
  *(.bss)
  *(.bss*)
- .bss.weightBuf.1956
+ .bss.weightBuf.1992
                 0x00800128       0x14 main.o
- .bss.ringCountFilt.1957
+ .bss.ringCountFilt.1993
                 0x0080013c        0x2 main.o
- .bss.startmsecCount.1960
+ .bss.startmsecCount.1996
                 0x0080013e        0x4 main.o
- .bss.startmsecCount.1924
+ .bss.startmsecCount.1956
                 0x00800142        0x4 main.o
- .bss.adcRingBuf.1895
+ .bss.adcRingBuf.1899
                 0x00800146       0x20 main.o
- .bss.adcRingCount.1894
+ .bss.adcRingCount.1898
                 0x00800166        0x2 main.o
- .bss.fndDigitCount.1882
+ .bss.fndDigitCount.1886
                 0x00800168        0x1 main.o
- .bss.blinkFlagState.1884
+ .bss.blinkFlagState.1888
                 0x00800169        0x1 main.o
- .bss.blinkCount.1883
+ .bss.blinkCount.1887
                 0x0080016a        0x2 main.o
  .bss.gUartRxBuffer
                 0x0080016c        0xa main.o
@@ -705,12 +711,12 @@ END GROUP
  .bss.timerCounter2
                 0x00800180        0x4 main.o
                 0x00800180                timerCounter2
- .bss.startCount.1906
+ .bss.startCount.1910
                 0x00800184        0x4 uart.o
- .bss.i.1873    0x00800188        0x2 uart.o
- .bss.gUartIndex.1875
+ .bss.i.1877    0x00800188        0x2 uart.o
+ .bss.gUartIndex.1879
                 0x0080018a        0x1 uart.o
- .bss.flagStx.1876
+ .bss.flagStx.1880
                 0x0080018b        0x1 uart.o
  *(COMMON)
  COMMON         0x0080018c       0x46 main.o
@@ -746,8 +752,8 @@ END GROUP
                 0x008001ce                codeOver
                 0x008001d0                testjk
                 0x008001d2                PROVIDE (__bss_end, .)
-                0x000017b4                __data_load_start = LOADADDR (.data)
-                0x000017dc                __data_load_end = (__data_load_start + SIZEOF (.data))
+                0x00001b30                __data_load_start = LOADADDR (.data)
+                0x00001b58                __data_load_end = (__data_load_start + SIZEOF (.data))
 
 .noinit         0x008001d2        0x0
                 [!provide]                PROVIDE (__noinit_start, .)
@@ -821,69 +827,69 @@ END GROUP
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x00000000      0x1b8
+.debug_aranges  0x00000000      0x1c8
  *(.debug_aranges)
  .debug_aranges
                 0x00000000       0x58 at93c46Spi.o
  .debug_aranges
-                0x00000058       0x90 main.o
+                0x00000058       0xa0 main.o
  .debug_aranges
-                0x000000e8       0x68 modeProc.o
+                0x000000f8       0x68 modeProc.o
  .debug_aranges
-                0x00000150       0x68 uart.o
+                0x00000160       0x68 uart.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x00000000     0x2387
+.debug_info     0x00000000     0x2474
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x00000000      0x780 L:/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_info    0x00000780      0x820 at93c46Spi.o
- .debug_info    0x00000fa0      0x9a4 main.o
- .debug_info    0x00001944      0x55e modeProc.o
- .debug_info    0x00001ea2      0x4e5 uart.o
+ .debug_info    0x00000fa0      0xa65 main.o
+ .debug_info    0x00001a05      0x58a modeProc.o
+ .debug_info    0x00001f8f      0x4e5 uart.o
 
-.debug_abbrev   0x00000000      0xeb3
+.debug_abbrev   0x00000000      0xf03
  *(.debug_abbrev)
  .debug_abbrev  0x00000000      0x718 L:/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_abbrev  0x00000718      0x17e at93c46Spi.o
- .debug_abbrev  0x00000896      0x29d main.o
- .debug_abbrev  0x00000b33      0x167 modeProc.o
- .debug_abbrev  0x00000c9a      0x219 uart.o
+ .debug_abbrev  0x00000896      0x2ed main.o
+ .debug_abbrev  0x00000b83      0x167 modeProc.o
+ .debug_abbrev  0x00000cea      0x219 uart.o
 
-.debug_line     0x00000000     0x1949
+.debug_line     0x00000000     0x1b9a
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x00000000      0x169 L:/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_line    0x00000169      0x43b at93c46Spi.o
- .debug_line    0x000005a4      0x759 main.o
- .debug_line    0x00000cfd      0x804 modeProc.o
- .debug_line    0x00001501      0x448 uart.o
+ .debug_line    0x000005a4      0x943 main.o
+ .debug_line    0x00000ee7      0x86b modeProc.o
+ .debug_line    0x00001752      0x448 uart.o
 
-.debug_frame    0x00000000      0x4d8
+.debug_frame    0x00000000      0x538
  *(.debug_frame)
  .debug_frame   0x00000000       0xb4 at93c46Spi.o
- .debug_frame   0x000000b4      0x210 main.o
- .debug_frame   0x000002c4       0xb4 modeProc.o
- .debug_frame   0x00000378      0x160 uart.o
+ .debug_frame   0x000000b4      0x270 main.o
+ .debug_frame   0x00000324       0xb4 modeProc.o
+ .debug_frame   0x000003d8      0x160 uart.o
 
-.debug_str      0x00000000      0x93f
+.debug_str      0x00000000      0x964
  *(.debug_str)
  .debug_str     0x00000000      0x27d L:/7.0/Packs/atmel/ATmega_DFP/1.3.300/gcc/dev/atmega128a/avr51/crtatmega128a.o
  .debug_str     0x0000027d      0x27d at93c46Spi.o
                                 0x2b9 (size before relaxing)
- .debug_str     0x000004fa      0x34a main.o
-                                0x576 (size before relaxing)
- .debug_str     0x00000844       0x3f modeProc.o
-                                0x352 (size before relaxing)
- .debug_str     0x00000883       0xbc uart.o
+ .debug_str     0x000004fa      0x36f main.o
+                                0x59b (size before relaxing)
+ .debug_str     0x00000869       0x3f modeProc.o
+                                0x370 (size before relaxing)
+ .debug_str     0x000008a8       0xbc uart.o
                                 0x2f4 (size before relaxing)
 
-.debug_loc      0x00000000     0x1682
+.debug_loc      0x00000000     0x1954
  *(.debug_loc)
  .debug_loc     0x00000000      0x591 at93c46Spi.o
- .debug_loc     0x00000591      0x7c8 main.o
- .debug_loc     0x00000d59      0x3b8 modeProc.o
- .debug_loc     0x00001111      0x571 uart.o
+ .debug_loc     0x00000591      0xa9a main.o
+ .debug_loc     0x0000102b      0x3b8 modeProc.o
+ .debug_loc     0x000013e3      0x571 uart.o
 
 .debug_macinfo
  *(.debug_macinfo)
@@ -903,12 +909,12 @@ END GROUP
 .debug_pubtypes
  *(.debug_pubtypes)
 
-.debug_ranges   0x00000000      0x178
+.debug_ranges   0x00000000      0x188
  *(.debug_ranges)
  .debug_ranges  0x00000000       0x48 at93c46Spi.o
- .debug_ranges  0x00000048       0x80 main.o
- .debug_ranges  0x000000c8       0x58 modeProc.o
- .debug_ranges  0x00000120       0x58 uart.o
+ .debug_ranges  0x00000048       0x90 main.o
+ .debug_ranges  0x000000d8       0x58 modeProc.o
+ .debug_ranges  0x00000130       0x58 uart.o
 
 .debug_macro
  *(.debug_macro)

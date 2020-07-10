@@ -95,7 +95,7 @@ uint8_t getButton(void){
 	if( (PINB | 0x0f ) == BTN_NULL ) return BTN_NULL;
 	else {
 		button = PINB | 0x0f;
-		_delay_ms(200);
+		_delay_ms(100);
 		return button;
 	}	
 }
@@ -175,6 +175,103 @@ void displayWeight(int16_t weightIn)
 	for(i = 0 ; i < 4 ; i++ ) fndData[i] = tmpDigit[i];
 }
 
+void displayWeight1(int16_t weightIn)
+{
+	int i;
+	int16_t tmpWeight;
+	
+	// display loadWeight
+	if(weightIn < 0 ){
+		tmpWeight = -weightIn;
+		if(tmpWeight > 998 ){
+			tmpDigit[3] = 0x40;
+			tmpDigit[2] = fndTableNum[9];
+			tmpDigit[1] = fndTableNum[9];
+			tmpDigit[0] = fndTableNum[9];
+			
+			} else {
+			tmpDigit[3] = 0x40;
+			tmpDigit[2] = tmpWeight/100;
+			tmpDigit[1] = (tmpWeight%100)/10;
+			tmpDigit[0] = tmpWeight%10;
+			for(i = 0 ; i < 3 ; i++ ) fndData[i] = fndTableNum[tmpDigit[i]];
+		}
+		if( codePoint != 0 ) fndData[codePoint] |= 0x80;
+		return;
+	}
+
+	if(weightIn > 9999 ){
+		tmpDigit[3] = 9;
+		tmpDigit[2] = 9;
+		tmpDigit[1] = 9;
+		tmpDigit[0] = 9;
+		} else {
+		tmpDigit[3] = weightIn/ 1000;
+		tmpDigit[2] = (weightIn%1000)/100;
+		tmpDigit[1] = (weightIn%100)/10;
+		tmpDigit[0] = weightIn%10;
+	}
+	
+	for(i = 0 ; i < 4 ; i++ ) tmpDigit[i] = fndTableNum[tmpDigit[i]];
+	
+	if(codePoint == 1 )			tmpDigit[1] |= 0x80;
+	else if(codePoint == 2 )	tmpDigit[2] |= 0x80;
+
+	for(i = 0 ; i < 4 ; i++ ) fndData[i] = tmpDigit[i];
+}
+
+void displayNumber1(int16_t weightIn)
+{
+	int i;
+	int16_t tmpWeight;
+	
+	// display loadWeight
+	if(weightIn < 0 ){
+		tmpWeight = -weightIn;
+		if(tmpWeight > 998 ){
+			tmpDigit[3] = 0x40;
+			tmpDigit[2] = fndTableNum[9];
+			tmpDigit[1] = fndTableNum[9];
+			tmpDigit[0] = fndTableNum[9];
+			
+			} else {
+			tmpDigit[3] = 0x40;
+			tmpDigit[2] = tmpWeight/100;
+			tmpDigit[1] = (tmpWeight%100)/10;
+			tmpDigit[0] = tmpWeight%10;
+			for(i = 0 ; i < 3 ; i++ ) fndData[i] = fndTableNum[tmpDigit[i]];
+		}
+		if( codePoint != 0 ) fndData[codePoint] |= 0x80;
+		return;
+	}
+
+	if(weightIn > 9999 ){
+		tmpDigit[3] = 9;
+		tmpDigit[2] = 9;
+		tmpDigit[1] = 9;
+		tmpDigit[0] = 9;
+		} else {
+		tmpDigit[3] = weightIn/ 1000;
+		tmpDigit[2] = (weightIn%1000)/100;
+		tmpDigit[1] = (weightIn%100)/10;
+		tmpDigit[0] = weightIn%10;
+	}
+	
+	for(i = 0 ; i < 4 ; i++ ) tmpDigit[i] = fndTableNum[tmpDigit[i]];
+	
+	if(tmpDigit[3] == fndTableNum[0] ) {
+		tmpDigit[3] = 0x00;
+		if(tmpDigit[2] == fndTableNum[0] ) {
+			tmpDigit[2] = 0x00;
+			if(tmpDigit[1] == fndTableNum[0] ) {
+				tmpDigit[1] = 0x00;
+			}
+		}
+	}
+
+	for(i = 0 ; i < 4 ; i++ ) fndData[i] = tmpDigit[i];
+}
+
 void displayNumber(int16_t weightIn)
 {
 	int i;
@@ -233,6 +330,7 @@ int returnVal;
 
 int main(void)
 {
+	uint8_t keyBuf;
 	
 	initGpio();
 	
@@ -253,6 +351,7 @@ int main(void)
 		procRelayOut( );
 		sciCommandProc( );	
 		command = getCommand();
+		if(command != BTN_NULL ) keyBuf = 1;
 		loadWeight = readLoad();
 		switch( machineState ){
 			case MODE_RUN			: modeRun(command)			; break;
@@ -261,7 +360,11 @@ int main(void)
 			case MODE_CHANGE_CODE	: modeChangeCode(command)	; break;
 			case MODE_ERROR			: modeError(command)		; break;			
 			default					: enterModeRun( )	; break;
-		}		
+		}
+		if(keyBuf ==  1){
+			while ( getCommand() != BTN_NULL ) ;
+			keyBuf = 0;
+		}
     }
 }
 
@@ -291,7 +394,7 @@ void procRelayOut(void)
 	}
 
 	tmp = PIND & 0x01;
-	if(tmp)	sbi(PORTA,RELAY_OVER);
+	if(tmp == 0)	sbi(PORTA,RELAY_OVER);
 	
 }
 

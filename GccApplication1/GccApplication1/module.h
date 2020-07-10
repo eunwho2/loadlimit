@@ -36,6 +36,8 @@ void systemErrProc( uint8_t err_no);
 void procRelayOut(void );
 void initCodeData();
 void displayNumber(int16_t weightIn);
+void displayNumber1(int16_t weightIn);
+void displayWeight1(int16_t weightIn);
 
 //--- at93c46
 void at93c46_ewen(void);
