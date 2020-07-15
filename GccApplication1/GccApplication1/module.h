@@ -17,7 +17,7 @@ void enterModeRun(void);
 void enterModePassWord(void);
 void enterModeSelectCode(void);
 void enterModeChangeCode(void);
-void enterModeError(void);
+void enterModeError(int errNo);
 
 int modeRun(uint8_t cmd);
 int modePassWord(uint8_t cmd );

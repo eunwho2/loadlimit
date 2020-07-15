@@ -131,11 +131,12 @@ int modeRun(uint8_t cmd)
 int modePassWord(uint8_t cmd )
 {
 	int i;
-	static int retryPassWord = 0;
+	// static int retryPassWord = 0;
 	int16_t passwd;
-	uint8_t tmp;
+	// uint8_t tmp;
 
-	if( (cmd != BTN_NULL) && ( retryPassWord == 1 )){
+/*
+	if( cmd != BTN_NULL ){
 		retryPassWord = 0 ;
 		for( i = 0 ; i < 4 ; i++){
 			tmp = passWord[i];
@@ -145,23 +146,18 @@ int modePassWord(uint8_t cmd )
 		editDigitPoint = 3;		// 1000
 		return 0;
 	}
-	
+*/	
 	if( cmd == BTN_ENTER ){
 		passwd = passWord[3] * 1000 +passWord[2] * 100 + passWord[1] * 10 + passWord[0]; 	
 		if( passwd == 5737 ){
-			if(codeNumber == CODE_SETT ){
-				saveCode(CODE_SETT,tmpCodeData);
-				saveCode(CODE_SPAN_ADC,adcWeight / 16);
-				calcWeightCoeff();
-				enterModeRun();				
-			} else if ( codeNumber == 10) {
-				return -1;				
-			} else {
-				enterModeSelectCode();
-			}
+			enterModeSelectCode();
+			return 0;
 		} else {
-			displayErr(ERR_PASS_WORD);
-			retryPassWord = 1;
+			tripNumber = 5;
+			enterModeError(tripNumber);
+			
+			// displayErr(ERR_PASS_WORD);
+			// retryPassWord = 1;
 			return 0;
 		}
 		return 0;
@@ -274,21 +270,37 @@ int modeChangeCode(uint8_t cmd)
 	
 	if(cmd == BTN_ENTER){
 		if( codeNumber == CODE_SETT ) {
-			tmp = tmpCodeData - codeAdcZero;
+			tmp = adcWeightIn - codeAdcZero;
 			if(tmp < 0 ) tmp = - tmp;
 			if( tmp < 20 ){
 				tripNumber = 1;
-				enterModeError();
-			} else if (( adcWeight / 16 ) > 1000 ){
+				enterModeError(tripNumber);
+			} else if ( adcWeightIn > 1000 ){
 				tripNumber = 2;
-				enterModeError();				
+				enterModeError(tripNumber);				
+			} else {
+				saveCode(CODE_SETT,tmpCodeData);
+				saveCode(CODE_SPAN_ADC,adcWeight / 16);
+				calcWeightCoeff();
+				enterModeRun();
 			}
-			else  enterModePassWord();
+			return 0;
 		} else if(codeNumber == CODE_AUTO){
-			// saveCode(codeNumber,tmpCodeData);
-			saveCode(9,adcWeight / 16);
-			calcWeightCoeff();
-			enterModeRun();			
+			if(tmpCodeData == 0 ){
+				 enterModeRun();
+				 return 0;
+			}
+			
+			tmp = adcWeightIn - codeAdcZero;
+			if(tmp < 0 ) tmp = - tmp;
+			if( tmp < 20 ){
+				tripNumber = 1;
+				enterModeError(tripNumber);
+			} else {				
+				saveCode(CODE_ZERO_ADC,adcWeight / 16);
+				calcWeightCoeff();
+				enterModeRun();
+			}			
 		} else {
 			saveCode(codeNumber,tmpCodeData);
 			enterModeRun();
@@ -395,21 +407,56 @@ int modeChangeCode(uint8_t cmd)
 	return 0;
 }
 
-void enterModeError(void)
+void enterModeError(int errNo)
 {
+	cntModeErr = timerCounter2;
+	mStateBk = machineState;
 	machineState = MODE_ERROR;
+	//codeNumberBk = codeNumber;
+	//tmpCodeDataBk = tmpCodeData;
+	
 	fndData[3] = fndTableChar['E' - 'A'];
 	fndData[2] = 0x40;
 	fndData[1] = fndTableNum[0];
-	fndData[0] = fndTableNum[tripNumber];
-	blinkCmdFlag = 0x0f;	//
+	fndData[0] = fndTableNum[errNo];
+	blinkCmdFlag = 0x0f;			//
 }
 
 int modeError(uint8_t cmd)
 {
-	if(cmd == BTN_ENTER){
-		enterModeRun();
-		return 0;
+	int i;
+	uint8_t tmp;
+	
+	if( elaspMsecTime(cntModeErr) > 3000 ) {
+		machineState = mStateBk;		
+		switch(mStateBk){
+		case MODE_RUN:
+			enterModeRun();
+			break;
+		case MODE_PASSWD:
+			machineState = MODE_PASSWD;
+			for( i = 0 ; i < 4 ; i++){
+				tmp = passWord[i];
+				fndData[i] = fndTableNum[tmp];
+			}
+			blinkCmdFlag = 0x08;
+			editDigitPoint = 3;		// 1000
+			break;
+		case MODE_CHANGE_CODE	:
+			
+			if(codeNumber == CODE_AUTO){
+				tmpCodeData = 0;
+				blinkCmdFlag = 0x0f;	//
+				fndData[3] = 0x00;
+				fndData[2] = fndTableChar['N' - 'A'];
+				fndData[1] = fndTableChar['O' - 'A'];
+				fndData[0] = 0x00;
+			} else if ( codeNumber == CODE_SETT ) {
+				setEditTmpFndData(tmpCodeData);
+			}
+		}
+	} else if(cmd == BTN_ENTER ){
+		machineState = mStateBk;
 	}
 	return 0;
 }

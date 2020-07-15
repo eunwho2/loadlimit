@@ -28,9 +28,13 @@ extern int tripNumber;
 extern volatile int x;
 
 extern volatile uint32_t timerCounter2;
+extern volatile uint32_t cntModeErr;
+
 extern volatile unsigned int FndValue;
 
 extern volatile uint8_t machineState;
+extern volatile uint8_t mStateBk;
+
 extern uint8_t blinkCmdFlag; // bit 0 : digit 1 blinking    bit 1 : digit 10 blinking
 extern uint8_t fndData[4];
 
@@ -39,8 +43,12 @@ extern uint8_t command;
 extern uint8_t passWord[4];
 extern uint8_t  editDigitPoint;		// digit for change
 extern int16_t adcWeight;
+
 extern int codeNumber;
 extern int16_t tmpCodeData;
+int codeNumberBk;
+int16_t tmpCodeDataBk;
+
 extern uint8_t tmpFndData[4];
 extern int16_t loadWeight;
 

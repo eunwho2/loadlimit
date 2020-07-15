@@ -29,9 +29,13 @@ int tripNumber;
 volatile int x;
 
 volatile uint32_t timerCounter2 = 0;
+volatile uint32_t cntModeErr = 0;
+
 volatile unsigned int FndValue = 0;
 
 volatile uint8_t machineState;
+volatile uint8_t mStateBk;
+
 uint8_t blinkCmdFlag; // bit 0 : digit 1 blinking    bit 1 : digit 10 blinking
 uint8_t fndData[4];
 
@@ -43,6 +47,10 @@ int16_t adcWeight;
 
 int codeNumber;
 int16_t tmpCodeData;
+
+int codeNumberBk;
+int16_t tmpCodeDataBk;
+
 uint8_t tmpFndData[4];
 int16_t loadWeight;
 

@@ -330,9 +330,13 @@ void initGpio()
 void calcWeightCoeff()
 {
 	calcFactor = (int32_t ) codeWeight * 1024 ;
-	calcFactor = calcFactor / ( codeAdcSpan - codeAdcZero );
-	calcOffset = (int32_t ) codeWeight * 1024;
-	calcOffset = - calcOffset * codeAdcZero / ( codeAdcSpan - codeAdcZero);
+
+	// calcFactor = calcFactor / ( codeAdcSpan - codeAdcZero );
+	calcFactor = calcFactor / codeAdcSpan;
+
+	//calcOffset = (int32_t ) codeWeight * 1024;
+	//calcOffset = - calcOffset * codeAdcZero / ( codeAdcSpan - codeAdcZero);
+	calcOffset = -(int32_t )( codeAutoZero * 1024);
 }
 
 void initCodeData(){
@@ -391,6 +395,17 @@ int main(void)
 
 void procRelayOut(void)
 {
+	if( machineState != MODE_RUN )
+	{
+		cbi(PORTA,RELAY_ALARM);
+		sbi(PORTE,LED_ALARM);
+
+		cbi(PORTA,RELAY_OVER);
+		sbi(PORTE,LED_OVER);
+	
+		 return;
+	}
+	
 	overOn  = ( loadWeight > codeOver  ) ? 1 : 0;
 	alarmOn = ( loadWeight > codeAlarm ) ? 1 : 0;
 	
@@ -442,18 +457,16 @@ int16_t readLoad(void)
 
 	if(adcWeightIn > 1020 ){
 		tripNumber = 3;
-		enterModeError();
+		enterModeError(tripNumber);
 		return 0;
-	} else if ( adcWeightIn < 0 ){
+	} else if ( adcWeightIn <= 0 ){
 		tripNumber = 4;
-		enterModeError();
+		enterModeError(tripNumber);
 		return 0;		
 	}
 
-	weight1 = (int16_t)(( calcFactor * adcWeightIn  + calcOffset ) / 1024) ;
+	weight1 = (int16_t) ( calcFactor * (adcWeightIn - codeAdcZero) / 1024) ;
 
-	// weight1 = (int16_t)( tmp >> 10 );
-	
 	weightBuf[ringCountFilt] = weight1;
 	ringCountFilt = (ringCountFilt > 8 ) ? 0 : ringCountFilt +1;
 	
