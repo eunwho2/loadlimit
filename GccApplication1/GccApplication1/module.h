@@ -24,6 +24,7 @@ int modePassWord(uint8_t cmd );
 int modeSelectCode(uint8_t cmd);
 int modeChangeCode(uint8_t cmd);
 int modeError(uint8_t cmd);
+void displayErr(int errNo);
 
 void TimerInterruptInit(void);
 uint32_t elaspMsecTime(uint32_t startTimerCount);
@@ -38,6 +39,7 @@ void initCodeData();
 void displayNumber(int16_t weightIn);
 void displayNumber1(int16_t weightIn);
 void displayWeight1(int16_t weightIn);
+void calcWeightCoeff();
 
 //--- at93c46
 void at93c46_ewen(void);

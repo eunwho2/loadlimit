@@ -38,12 +38,24 @@ void enterModeSelectCode(void)
 	blinkCmdFlag = 0x0f;	//
 }
 
+void setEditTmpFndData(int16_t arg1)
+{		
+	tmpFndData[3] = arg1 / 1000;
+	tmpFndData[2] = (arg1 % 1000) /100;
+	tmpFndData[1] = ( arg1 % 100 ) / 10;
+	tmpFndData[0] = arg1 % 10 ;
+
+	editDigitPoint = 0;		
+	blinkCmdFlag = 0x01;
+	displayWeight1(arg1);
+}
+
 void enterModeChangeCode(void)
 {
 	machineState = MODE_CHANGE_CODE;
 
 	switch(codeNumber){	
-	case 0:
+	case CODE_POINT:
 		tmpCodeData = codePoint;
 		if(tmpCodeData == 0) blinkCmdFlag = 1;
 		else if(tmpCodeData == 1) blinkCmdFlag = 2;
@@ -54,18 +66,18 @@ void enterModeChangeCode(void)
 		}		
 		displayWeight1(loadWeight);
 		break;
-	case 1:
+	case CODE_FILT:
 		tmpCodeData = codeFilt;	//
 		blinkCmdFlag = 1;
 		displayNumber1(tmpCodeData);		// no point add space 
 		break;
-	case 2:
+	case CODE_DIVISION:
 		tmpCodeData = codeDivision;	//
 		blinkCmdFlag = 1;
 		displayNumber1(tmpCodeData);		// no point add space
 		break;
-	case 3:
-		tmpCodeData = codeAutoZero;
+	case CODE_AUTO:
+		tmpCodeData = 0;
 		blinkCmdFlag = 0x0f;	//
 		if(tmpCodeData){
 			fndData[3] = 0x00;
@@ -79,23 +91,17 @@ void enterModeChangeCode(void)
 			fndData[0] = 0x00;
 		}
 		break;
-	case 4:
+	case CODE_ALARM:
 		tmpCodeData = codeAlarm;
-		editDigitPoint = 0;		// 1000
-		blinkCmdFlag = 0x01;
-		displayWeight1(tmpCodeData);
+		setEditTmpFndData(tmpCodeData);
 		break;
-	case 5:
+	case CODE_OVER:
 		tmpCodeData = codeOver;
-		editDigitPoint = 0;		// 1000
-		blinkCmdFlag = 0x01;
-		displayWeight1(tmpCodeData);
+		setEditTmpFndData(tmpCodeData);
 		break;
-	case 6:
+	case CODE_SETT:
 		tmpCodeData = codeWeight;
-		editDigitPoint = 0;		// 1000
-		blinkCmdFlag = 0x01;
-		displayWeight1(tmpCodeData);
+		setEditTmpFndData(tmpCodeData);
 		break;
 	case 7:
 		editDigitPoint = 0;		// 1000
@@ -115,7 +121,9 @@ int modeRun(uint8_t cmd)
 		// enterModeSelectCode();
 		return 0;
 	}
-	displayWeight(loadWeight);
+
+	if( (PIND & 0x01) == 0) displayWeight(codeOver);
+	else					displayWeight(loadWeight);
 	return 0;
 }
 
@@ -123,14 +131,28 @@ int modeRun(uint8_t cmd)
 int modePassWord(uint8_t cmd )
 {
 	int i;
+	static int retryPassWord = 0;
 	int16_t passwd;
+	uint8_t tmp;
+
+	if( (cmd != BTN_NULL) && ( retryPassWord == 1 )){
+		retryPassWord = 0 ;
+		for( i = 0 ; i < 4 ; i++){
+			tmp = passWord[i];
+			fndData[i] = fndTableNum[tmp];
+		}
+		blinkCmdFlag = 0x08;
+		editDigitPoint = 3;		// 1000
+		return 0;
+	}
 	
 	if( cmd == BTN_ENTER ){
 		passwd = passWord[3] * 1000 +passWord[2] * 100 + passWord[1] * 10 + passWord[0]; 	
 		if( passwd == 5737 ){
-			if(codeNumber == 6 ){
-				saveCode(6,tmpCodeData);
-				saveCode(8,adcWeight / 16);
+			if(codeNumber == CODE_SETT ){
+				saveCode(CODE_SETT,tmpCodeData);
+				saveCode(CODE_SPAN_ADC,adcWeight / 16);
+				calcWeightCoeff();
 				enterModeRun();				
 			} else if ( codeNumber == 10) {
 				return -1;				
@@ -138,15 +160,15 @@ int modePassWord(uint8_t cmd )
 				enterModeSelectCode();
 			}
 		} else {
-			if(codeNumber == 10 ) return -2;
-			else  enterModeRun();
+			displayErr(ERR_PASS_WORD);
+			retryPassWord = 1;
+			return 0;
 		}
 		return 0;
 	}
 
 	if(cmd == BTN_CANCEL){
-		if(codeNumber == 10 ) return -2;
-		else			enterModeRun();
+		enterModeRun();
 		return 0;
 	}
 	
@@ -185,49 +207,49 @@ int modeSelectCode(uint8_t cmd)
 	if(cmd == BTN_UP){
 		codeNumber = ( codeNumber > 7 ) ? 0 : codeNumber +1;
 		switch(codeNumber){
-			case 0 :
+			case CODE_POINT :
 				fndData[3] = fndTableChar['P' - 'A'];
 				fndData[2] = fndTableChar['O' - 'A'];
 				fndData[1] = fndTableChar['I' - 'A'];
 				fndData[0] = fndTableChar['T' - 'A'];
 				break;
-			case 1 :
+			case CODE_FILT :
 				fndData[3] = fndTableChar['F' - 'A'];
 				fndData[2] = fndTableChar['I' - 'A'];
 				fndData[1] = fndTableChar['L' - 'A'];
 				fndData[0] = fndTableChar['T' - 'A'];
 				break;
-			case 2 :
+			case CODE_DIVISION :
 				fndData[3] = fndTableChar['D' - 'A'];
 				fndData[2] = fndTableChar['I' - 'A'];
 				fndData[1] = fndTableChar['V' - 'A'];
 				fndData[0] = fndTableChar['I' - 'A'];
 				break;
-			case 3 :
+			case CODE_AUTO :
 				fndData[3] = fndTableChar['A' - 'A'];
 				fndData[2] = fndTableChar['U' - 'A'];
 				fndData[1] = fndTableChar['T' - 'A'];
 				fndData[0] = fndTableChar['O' - 'A'];
 				break;
-			case 4 :
+			case CODE_ALARM :
 				fndData[3] = fndTableChar['A' - 'A'];
 				fndData[2] = fndTableChar['L' - 'A'];
 				fndData[1] = fndTableChar['A' - 'A'];
 				fndData[0] = fndTableChar['R' - 'A'];
 				break;
-			case 5 :
+			case CODE_OVER :
 				fndData[3] = fndTableChar['O' - 'A'];
 				fndData[2] = fndTableChar['V' - 'A'];
 				fndData[1] = fndTableChar['E' - 'A'];
 				fndData[0] = fndTableChar['R' - 'A'];
 				break;
-			case 6 :
+			case CODE_SETT :
 				fndData[3] = fndTableChar['S' - 'A'];
 				fndData[2] = fndTableChar['E' - 'A'];
 				fndData[1] = fndTableChar['T' - 'A'];
 				fndData[0] = fndTableChar['T' - 'A'];
 				break;
-			case 7 :
+			case CODE_ADC :
 				fndData[3] = 0x40;
 				fndData[2] = fndTableChar['A' - 'A'];
 				fndData[1] = fndTableChar['D' - 'A'];
@@ -251,7 +273,7 @@ int modeChangeCode(uint8_t cmd)
 	int16_t tmp;
 	
 	if(cmd == BTN_ENTER){
-		if( codeNumber == 6 ) {
+		if( codeNumber == CODE_SETT ) {
 			tmp = tmpCodeData - codeAdcZero;
 			if(tmp < 0 ) tmp = - tmp;
 			if( tmp < 20 ){
@@ -262,9 +284,10 @@ int modeChangeCode(uint8_t cmd)
 				enterModeError();				
 			}
 			else  enterModePassWord();
-		} else if(codeNumber == 3){
-			saveCode(codeNumber,tmpCodeData);
+		} else if(codeNumber == CODE_AUTO){
+			// saveCode(codeNumber,tmpCodeData);
 			saveCode(9,adcWeight / 16);
+			calcWeightCoeff();
 			enterModeRun();			
 		} else {
 			saveCode(codeNumber,tmpCodeData);
@@ -278,14 +301,14 @@ int modeChangeCode(uint8_t cmd)
 		return 0;
 	}
 
-	if(codeNumber == 7)	{
+	if(codeNumber == CODE_ADC )	{
 		displayNumber(adcWeightIn);
 		return 0;
 	}
 
 	if(cmd == BTN_UP){
 		switch(codeNumber){
-		case 0:
+		case CODE_POINT:
 			tmpCodeData = ( tmpCodeData > 1 ) ? 0 : tmpCodeData + 1;
 			if(tmpCodeData == 0) blinkCmdFlag = 1;
 			else if(tmpCodeData == 1) blinkCmdFlag = 2;
@@ -298,12 +321,12 @@ int modeChangeCode(uint8_t cmd)
 			displayWeight1(loadWeight);
 			//displayNumber(loadWeight);
 			break;
-		case 1:
+		case CODE_FILT:
 			tmpCodeData = ( tmpCodeData > 8 ) ? 0 : tmpCodeData + 1;
 			//displayWeight(tmpCodeData);
 			displayNumber1(tmpCodeData);
 			break;
-		case 2:
+		case CODE_DIVISION:
 			switch(tmpCodeData){
 				case 0: tmpCodeData = 1; break;
 				case 1: tmpCodeData = 2; break;
@@ -313,7 +336,7 @@ int modeChangeCode(uint8_t cmd)
 			}
 			displayNumber1(tmpCodeData);
 			break;
-		case 3:
+		case CODE_AUTO:
 			if(tmpCodeData){
 				tmpCodeData = 0;
 				fndData[3] = 0x00;
@@ -328,9 +351,9 @@ int modeChangeCode(uint8_t cmd)
 				fndData[0] = fndTableChar['S' - 'A'];
 			}
 			break;
-		case 4:
-		case 5:
-		case 6:
+		case CODE_ALARM:
+		case CODE_OVER:
+		case CODE_SETT:
 			tmpFndData[editDigitPoint] = ( tmpFndData[editDigitPoint] > 8 ) ? 0 : tmpFndData[editDigitPoint] +1;
 			tmpCodeData = tmpFndData[3] * 1000 +tmpFndData[2]*100 + tmpFndData[1] * 10 + tmpFndData[0];
 			displayWeight1(tmpCodeData);
@@ -389,4 +412,13 @@ int modeError(uint8_t cmd)
 		return 0;
 	}
 	return 0;
+}
+
+void displayErr(int errNo)
+{
+	fndData[3] = fndTableChar['E' - 'A'];
+	fndData[2] = 0x40;
+	fndData[1] = fndTableNum[errNo/10];
+	fndData[0] = fndTableNum[(errNo % 10) ];
+	blinkCmdFlag = 0x0f;	//
 }

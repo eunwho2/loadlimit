@@ -40,11 +40,25 @@
 #define cbi(port,bit)	(port) &= ~(1<<(bit))
 #define CS 0
 
+
+#define CODE_POINT				0
+#define CODE_FILT				1
+#define CODE_DIVISION			2
+#define CODE_AUTO				3
+#define CODE_ALARM				4
+#define CODE_OVER				5
+#define CODE_SETT				6
+#define CODE_ADC				7
+#define CODE_SPAN_ADC			8
+#define CODE_ZERO_ADC			9
+
+
 // define error 
 #define ERR_SCALE_TOO_LOW		1		// gain and zero differ below 20
 #define ERR_SCALE_TOO_HIGH		2		// gain adc over 1000
 #define ERR_ADC_OVER			3		// adc value over 1020
 #define ERR_ADC_UNDER			4		// adc below 0
+#define ERR_PASS_WORD			5		// pass word err 
 
 #define ERR_SYS_NO_CODE_NUMBER	50		// no codeNumber
 
