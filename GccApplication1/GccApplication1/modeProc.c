@@ -280,7 +280,8 @@ int modeChangeCode(uint8_t cmd)
 				enterModeError(tripNumber);				
 			} else {
 				saveCode(CODE_SETT,tmpCodeData);
-				saveCode(CODE_SPAN_ADC,adcWeight / 16);
+				saveCode(CODE_SPAN_ADC,adcWeightIn);
+				saveCode(CODE_ZERO_ADC,0);
 				calcWeightCoeff();
 				enterModeRun();
 			}
@@ -297,8 +298,8 @@ int modeChangeCode(uint8_t cmd)
 				tripNumber = 1;
 				enterModeError(tripNumber);
 			} else {				
-				saveCode(CODE_ZERO_ADC,adcWeight / 16);
-				calcWeightCoeff();
+				saveCode(CODE_ZERO_ADC,adcWeightIn);
+				// calcWeightCoeff();
 				enterModeRun();
 			}			
 		} else {

@@ -62,7 +62,6 @@ void initADC()
 	ADCSRA = 0b11111111;
 	
 }
-uint16_t testjk;
 
 ISR(ADC_vect)
 {
@@ -74,7 +73,6 @@ ISR(ADC_vect)
 	tmp = ADCL;
 	
 	tmpAdc = ( ADCH & 0x03 ) * 256 + tmp;
-	testjk = tmpAdc;
 
 	adcWeight -= adcRingBuf[adcRingCount];
 	adcRingBuf[adcRingCount] = adcWeightIn;	
@@ -336,7 +334,7 @@ void calcWeightCoeff()
 
 	//calcOffset = (int32_t ) codeWeight * 1024;
 	//calcOffset = - calcOffset * codeAdcZero / ( codeAdcSpan - codeAdcZero);
-	calcOffset = -(int32_t )( codeAutoZero * 1024);
+	// calcOffset = -(int32_t )( codeAutoZero * 1024);
 }
 
 void initCodeData(){
@@ -455,14 +453,16 @@ int16_t readLoad(void)
 	if( elaspMsecTime(startmsecCount) < 100 ) return loadWeight ;
 	startmsecCount = timerCounter2;
 
-	if(adcWeightIn > 1020 ){
-		tripNumber = 3;
-		enterModeError(tripNumber);
-		return 0;
-	} else if ( adcWeightIn <= 0 ){
-		tripNumber = 4;
-		enterModeError(tripNumber);
-		return 0;		
+	if(	machineState == MODE_RUN) {
+		if(adcWeightIn > 1020 ){
+			tripNumber = ERR_ADC_OVER;		// 3
+			enterModeError(tripNumber);
+			return 0;
+		} else if ( adcWeightIn <= 0 ){
+			tripNumber = ERR_ADC_UNDER; // 4
+			enterModeError(tripNumber);
+			return 0;		
+		}
 	}
 
 	weight1 = (int16_t) ( calcFactor * (adcWeightIn - codeAdcZero) / 1024) ;
