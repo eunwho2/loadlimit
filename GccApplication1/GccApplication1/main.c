@@ -328,13 +328,23 @@ void initGpio()
 void calcWeightCoeff()
 {
 	calcFactor = (int32_t ) codeWeight * 1024 ;
+	calcFactor = calcFactor / ( codeAdcSpan - codeAdcZero );
 
+	calcOffset = (int32_t ) codeWeight * 1024;
+	calcOffset = - calcOffset * codeAdcZero / ( codeAdcSpan - codeAdcZero);
+}
+
+void calcWeightOffset()
+{
+	// calcFactor = (int32_t ) codeWeight * 1024 ;
 	// calcFactor = calcFactor / ( codeAdcSpan - codeAdcZero );
-	calcFactor = calcFactor / codeAdcSpan;
-
-	//calcOffset = (int32_t ) codeWeight * 1024;
-	//calcOffset = - calcOffset * codeAdcZero / ( codeAdcSpan - codeAdcZero);
-	// calcOffset = -(int32_t )( codeAutoZero * 1024);
+	int32_t tmp;
+	
+	tmp = (int32_t)( codeAdcSpan - codeAdcZero);
+	
+	calcOffset = (int32_t ) codeWeight * 1024;
+	calcOffset = calcOffset / tmp;
+	calcOffset = - calcOffset * codeAdcZero;
 }
 
 void initCodeData(){

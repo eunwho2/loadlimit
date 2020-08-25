@@ -26,6 +26,8 @@ int modeChangeCode(uint8_t cmd);
 int modeError(uint8_t cmd);
 void displayErr(int errNo);
 
+// main.c
+
 void TimerInterruptInit(void);
 uint32_t elaspMsecTime(uint32_t startTimerCount);
 uint8_t getButton(void);
@@ -40,6 +42,7 @@ void displayNumber(int16_t weightIn);
 void displayNumber1(int16_t weightIn);
 void displayWeight1(int16_t weightIn);
 void calcWeightCoeff();
+void calcWeightOffset();
 
 //--- at93c46
 void at93c46_ewen(void);

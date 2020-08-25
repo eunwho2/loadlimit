@@ -281,17 +281,16 @@ int modeChangeCode(uint8_t cmd)
 			} else {
 				saveCode(CODE_SETT,tmpCodeData);
 				saveCode(CODE_SPAN_ADC,adcWeightIn);
-				saveCode(CODE_ZERO_ADC,0);
 				calcWeightCoeff();
 				enterModeRun();
 			}
 			return 0;
 		} else if(codeNumber == CODE_AUTO){
+/*
 			if(tmpCodeData == 0 ){
 				 enterModeRun();
 				 return 0;
-			}
-			
+			}			
 			tmp = adcWeightIn - codeAdcZero;
 			if(tmp < 0 ) tmp = - tmp;
 			if( tmp < 20 ){
@@ -299,9 +298,13 @@ int modeChangeCode(uint8_t cmd)
 				enterModeError(tripNumber);
 			} else {				
 				saveCode(CODE_ZERO_ADC,adcWeightIn);
-				// calcWeightCoeff();
+				calcWeightOffset();
 				enterModeRun();
-			}			
+			}
+*/
+				saveCode(CODE_ZERO_ADC,adcWeightIn);
+				calcWeightOffset();
+				enterModeRun();						
 		} else {
 			saveCode(codeNumber,tmpCodeData);
 			enterModeRun();
